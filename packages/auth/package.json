@@ -1,22 +1,21 @@
 {
-  "name": "@sstauth/scripts",
+  "name": "@sstauth/auth",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
+    "@openauthjs/openauth": "^0.4.3",
     "@sstauth/core": "*",
-    "sst": "*"
-  },
-  "scripts": {
-    "shell": "sst shell tsx"
+    "hono": "^4.7.5",
+    "sst": "*",
+    "valibot": "^1.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/aws-lambda": "^8",
     "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^8.26.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-node": "^11.1.0",
-    "prettier": "^3.5.3",
-    "tsx": "^4"
+    "prettier": "^3.5.3"
   }
 }

@@ -5,6 +5,25 @@
 
 declare module "sst" {
   export interface Resource {
+    "MyApi": {
+      "type": "sst.aws.ApiGatewayV2"
+      "url": string
+    }
+    "MyAuth": {
+      "type": "sst.aws.Auth"
+      "url": string
+    }
+    "MyFunction": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "MyTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
+    "MyWeb": {
+      "type": "sst.aws.Nextjs"
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />

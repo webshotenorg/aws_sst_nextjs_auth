@@ -3,13 +3,17 @@
 export default $config({
   app(input) {
     return {
-      name: "nextjsapp",
+      name: "sstauth",
       removal: input?.stage === "production" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),
       home: "aws",
     };
   },
   async run() {
+    const auth = new sst.aws.Auth("MyAuth", {
+      issuer: "packages/auth/index.handler",
+    });
+
     const table = new sst.aws.Dynamo("MyTable", {
       fields: {
         userId: "string",
@@ -41,9 +45,10 @@ export default $config({
 
     new sst.aws.Nextjs("MyWeb", {
       path: "packages/web",
-      link: [api],
+      link: [api, auth],
       environment: {
         NEXT_PUBLIC_API_URL: api.url,
+        NEXT_PUBLIC_OPEN_AUTH: auth.url,
       },
     });
 

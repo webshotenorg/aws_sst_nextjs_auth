@@ -1,7 +1,7 @@
 import { Handler } from "aws-lambda";
-import { Example } from "@nextjsapp/core/example";
+import { Example } from "@sstauth/core/example";
 import { User } from "../../core/src/user";
-import { docClient } from "@nextjsapp/core/dynamodb";
+import { docClient } from "@sstauth/core/dynamodb";
 
 export const handler: Handler = async (_event) => {
   console.log(_event);

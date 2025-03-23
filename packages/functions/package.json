@@ -1,9 +1,9 @@
 {
-  "name": "@nextjsapp/functions",
+  "name": "@sstauth/functions",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@nextjsapp/core": "*",
+    "@sstauth/core": "*",
     "sst": "*"
   },
   "devDependencies": {
