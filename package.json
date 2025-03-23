@@ -1,0 +1,24 @@
+{
+  "name": "nextjsapp",
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {},
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.0",
+    "@tsconfig/node22": "^22",
+    "eslint": "^9.22.0",
+    "eslint-config-serverless-stack": "^0.69.7",
+    "prettier": "^3.5.3",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "sst": "^3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "serverless-stack"
+    ]
+  }
+}
