@@ -55,6 +55,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       process.env.NEXT_PUBLIC_COGNITO_REDIRECT_URI!,
     );
 
+    if (!cognitoDomain || !clientId || !redirectUri) {
+      console.error('Cognito環境変数が設定されていません');
+      return;
+    }
+
     const scope = [
       'openid',
       'email',

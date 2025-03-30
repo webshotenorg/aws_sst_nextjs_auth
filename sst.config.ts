@@ -10,6 +10,10 @@ export default $config({
     };
   },
   async run() {
+    const nextjsUrl = ["production", "develop"].includes($app.stage)
+      ? process.env.BASE_URL
+      : "http://localhost:3000";
+
     const userPool = new sst.aws.CognitoUserPool("MyUserPool", {
       transform: {
         userPool(args, opts, name) {
@@ -51,8 +55,8 @@ export default $config({
             "ALLOW_REFRESH_TOKEN_AUTH",
           ];
           args.supportedIdentityProviders = ["COGNITO"];
-          args.callbackUrls = ["http://localhost:3000/api/auth/callback"];
-          args.logoutUrls = ["http://localhost:3000/dashboard"];
+          args.callbackUrls = [`${nextjsUrl}/api/auth/callback`];
+          args.logoutUrls = [`${nextjsUrl}/dashboard`];
           args.allowedOauthFlows = ["code"]; // 認証コードフローを有効化
           args.allowedOauthScopes = [
             "openid",
@@ -109,7 +113,7 @@ export default $config({
         NEXT_PUBLIC_API_URL: $interpolate`${api.url}`,
         NEXT_PUBLIC_COGNITO_REGION: $interpolate`${region}`,
         NEXT_PUBLIC_COGNITO_REDIRECT_URI:
-          $interpolate`http://localhost:3000/api/auth/callback`,
+          $interpolate`${nextjsUrl}/api/auth/callback`,
         NEXT_PUBLIC_COGNITO_USER_POOL_ID: $interpolate`${userPool.id}`,
         NEXT_PUBLIC_COGNITO_CLIENT_ID: $interpolate`${userPoolWeb.id}`,
         COGNITO_CLIENT_SECRET: $interpolate`${userPoolWeb.secret}`,

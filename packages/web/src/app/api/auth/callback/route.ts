@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 
         console.log(tokens);
         res.cookies.set("idToken", tokens.id_token, {
-            httpOnly: false,
+            httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             maxAge: tokens.expires_in,
             sameSite: "lax", // or "none" for cross-site
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
         });
 
         res.cookies.set("accessToken", tokens.access_token, {
-            httpOnly: false,
+            httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             maxAge: tokens.expires_in,
             sameSite: "lax", // or "none" for cross-site

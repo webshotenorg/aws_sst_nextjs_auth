@@ -101,3 +101,9 @@ sequenceDiagram
     Cognito-->>API: 認証トークン
     API-->>Next.js: HttpOnly Cookieに設定
 ```
+
+6. デプロイ
+
+```bash
+npx sst deploy --stage develop
+```
