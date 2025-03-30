@@ -9,6 +9,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.777.0",
+    "@openauthjs/openauth": "^0.4.3",
+    "cookies-next": "^5.1.0",
     "next": "15.2.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

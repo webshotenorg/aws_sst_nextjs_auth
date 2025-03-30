@@ -10,8 +10,64 @@ export default $config({
     };
   },
   async run() {
-    const auth = new sst.aws.Auth("MyAuth", {
-      issuer: "packages/auth/index.handler",
+    const userPool = new sst.aws.CognitoUserPool("MyUserPool", {
+      transform: {
+        userPool(args, opts, name) {
+          args.autoVerifiedAttributes = ["email"];
+          args.usernameAttributes = ["email"];
+          args.usernameConfiguration = {
+            caseSensitive: false, // メールの大文字小文字を区別しない
+          };
+
+          args.accountRecoverySetting = {
+            recoveryMechanisms: [{ name: "verified_email", priority: 1 }],
+          };
+
+          args.emailConfiguration = {
+            emailSendingAccount: "COGNITO_DEFAULT",
+          };
+
+          args.adminCreateUserConfig = {
+            allowAdminCreateUserOnly: false, // ユーザー自身のサインアップを許可
+          };
+          args.passwordPolicy = {
+            minimumLength: 8,
+            requireLowercase: true,
+            requireNumbers: true,
+            requireUppercase: true,
+            requireSymbols: false, // 記号は任意
+            temporaryPasswordValidityDays: 7, // 仮パスワード有効期限
+          };
+        },
+      },
+    });
+
+    const userPoolWeb = userPool.addClient("Web", {
+      transform: {
+        client(args, opts, name) {
+          args.generateSecret = true;
+          args.explicitAuthFlows = [
+            "ALLOW_USER_PASSWORD_AUTH",
+            "ALLOW_REFRESH_TOKEN_AUTH",
+          ];
+          args.supportedIdentityProviders = ["COGNITO"];
+          args.callbackUrls = ["http://localhost:3000/api/auth/callback"];
+          args.logoutUrls = ["http://localhost:3000/dashboard"];
+          args.allowedOauthFlows = ["code"]; // 認証コードフローを有効化
+          args.allowedOauthScopes = [
+            "openid",
+            "email",
+            "profile",
+            "aws.cognito.signin.user.admin",
+          ];
+          args.allowedOauthFlowsUserPoolClient = true; // ユーザープールクライアントでOAuthを許可
+        },
+      },
+    });
+
+    new aws.cognito.UserPoolDomain("MyCognitoDomain", {
+      userPoolId: userPool.id,
+      domain: `${$app.name}-${$app.stage}`, // グローバルで一意なプレフィックス
     });
 
     const table = new sst.aws.Dynamo("MyTable", {
@@ -43,18 +99,29 @@ export default $config({
 
     api.route("GET /", func.arn);
 
-    new sst.aws.Nextjs("MyWeb", {
+    const current = await aws.getRegion({});
+    const region = current.name;
+
+    const web = new sst.aws.Nextjs("MyWeb", {
       path: "packages/web",
-      link: [api, auth],
+      link: [api],
       environment: {
-        NEXT_PUBLIC_API_URL: api.url,
-        NEXT_PUBLIC_OPEN_AUTH: auth.url,
+        NEXT_PUBLIC_API_URL: $interpolate`${api.url}`,
+        NEXT_PUBLIC_COGNITO_REGION: $interpolate`${region}`,
+        NEXT_PUBLIC_COGNITO_REDIRECT_URI:
+          $interpolate`http://localhost:3000/api/auth/callback`,
+        NEXT_PUBLIC_COGNITO_USER_POOL_ID: $interpolate`${userPool.id}`,
+        NEXT_PUBLIC_COGNITO_CLIENT_ID: $interpolate`${userPoolWeb.id}`,
+        COGNITO_CLIENT_SECRET: $interpolate`${userPoolWeb.secret}`,
+        NEXT_PUBLIC_COGNITO_DOMAIN:
+          $interpolate`${$app.name}-${$app.stage}.auth.${region}.amazoncognito.com`,
       },
     });
 
     return {
       MyApi: api,
       MyTable: table,
+      MyWeb: web,
     };
   },
 });

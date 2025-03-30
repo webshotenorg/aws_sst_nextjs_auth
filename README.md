@@ -90,3 +90,14 @@ npx sst dev
 ```bash
 npx sst remove
 ```
+
+```mermaid
+sequenceDiagram
+    participant Next.js as Next.js Frontend
+    participant API as Next.js API Routes
+    participant Cognito as Cognito
+    Next.js->>API: ユーザー名/パスワード送信
+    API->>Cognito: InitiateAuth (ADMIN_NO_SRP_AUTH)
+    Cognito-->>API: 認証トークン
+    API-->>Next.js: HttpOnly Cookieに設定
+```

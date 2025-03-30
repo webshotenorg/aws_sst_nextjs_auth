@@ -9,10 +9,6 @@ declare module "sst" {
       "type": "sst.aws.ApiGatewayV2"
       "url": string
     }
-    "MyAuth": {
-      "type": "sst.aws.Auth"
-      "url": string
-    }
     "MyFunction": {
       "name": string
       "type": "sst.aws.Function"
@@ -21,8 +17,17 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Dynamo"
     }
+    "MyUserPool": {
+      "id": string
+      "type": "sst.aws.CognitoUserPool"
+    }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
+    }
+    "Web": {
+      "id": string
+      "secret": string
+      "type": "sst.aws.CognitoUserPoolClient"
     }
   }
 }
