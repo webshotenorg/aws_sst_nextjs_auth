@@ -9,16 +9,20 @@ export function middleware(request: NextRequest) {
     const accessToken = request.cookies.get("accessToken")?.value;
 
     if (!accessToken && !isPublicPath) {
-        return NextResponse.redirect(new URL("/login", request.nextUrl));
+        const encoded = encodeURIComponent(path);
+        return NextResponse.redirect(
+            // returnToで認証後遷移できるように保持する
+            new URL(`/login?returnTo=${encoded}`, request.nextUrl),
+        );
     }
 
     if (accessToken && isPublicPath) {
-        return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
+        return NextResponse.redirect(new URL(path, request.nextUrl));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*", "/login"],
+    matcher: ["/dashboard/:path*", "/about", "/login"],
 };

@@ -5,6 +5,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get("code");
     const error = searchParams.get("error");
+    const returnTo = searchParams.get("state");
 
     if (error) {
         return NextResponse.redirect(
@@ -64,7 +65,7 @@ export async function GET(request: NextRequest) {
 
         // トークンを保存
         const res = NextResponse.redirect(
-            new URL("/dashboard", request.nextUrl.origin),
+            new URL(returnTo ? returnTo : "/dashboard", request.nextUrl.origin),
         );
 
         console.log(tokens);

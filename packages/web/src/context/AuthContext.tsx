@@ -15,7 +15,7 @@ interface AuthContextType {
   user: any;
   isAuthenticated: boolean;
   isLoading: boolean;
-  redirectToCognitoHostedUI: () => void;
+  redirectToCognitoHostedUI: (redirect: string) => void;
   logout: () => void;
   validateSession: () => Promise<Validate>; // 追加
 }
@@ -34,13 +34,6 @@ interface Validate {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const getCookie = (name: string) => {
-  // クッキー文字列を解析する正規表現
-  const cookieRegex = new RegExp(`(^| )${name}=([^;]+)`);
-  const match = document.cookie.match(cookieRegex);
-  return match ? decodeURIComponent(match[2]) : null;
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const redirectToCognitoHostedUI = () => {
+  const redirectToCognitoHostedUI = (returnTo?: string) => {
     const cognitoDomain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN;
     const clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID;
     const redirectUri = encodeURIComponent(
@@ -67,7 +60,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       'aws.cognito.signin.user.admin',
     ].join(' ');
 
-    const loginUrl = `https://${cognitoDomain}/login?client_id=${clientId}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}`;
+    const addUrl = returnTo ? `&state=${encodeURIComponent(returnTo)}` : '';
+    const loginUrl =
+      `https://${cognitoDomain}/login?client_id=${clientId}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}` +
+      addUrl;
+
     window.location.href = loginUrl;
   };
 
