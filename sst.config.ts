@@ -69,7 +69,7 @@ export default $config({
       },
     });
 
-    new aws.cognito.UserPoolDomain("MyCognitoDomain", {
+    const userPoolDomain = new aws.cognito.UserPoolDomain("MyCognitoDomain", {
       userPoolId: userPool.id,
       domain: `${$app.name}-${$app.stage}`, // グローバルで一意なプレフィックス
     });
